@@ -13,7 +13,7 @@ class Daktronics (SerialConnection):
 
     def parse(self, message: str) -> None:
         '''Parse Daktronics Real Time Data'''
-        print(message)
+
         try:
             header, unprocessed = message.split(chr(2))
             text, checksum = unprocessed.split(chr(4))
