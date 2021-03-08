@@ -1,6 +1,6 @@
-from consoles.cts import ColoradoTimeSystems
 from typing import Dict, Tuple
 from .daktronics import Daktronics
+from .cts import ColoradoTimeSystems
 
 class Volleyball (Daktronics):
     '''Volleyball as scored by a Daktronics All Sport 5000.'''
