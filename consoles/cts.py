@@ -55,3 +55,10 @@ class ColoradoTimeSystems (SerialConnection):
                     # Bytes not representing a channel are values for the preceeding channel
                     digit, value = self.get_value(hexx)
                     values[digit] = value
+
+CHANNELS = {
+    "game_time": 1,
+    "shot": 3,
+    "period_shot": 30,
+    "scores": 13
+}
