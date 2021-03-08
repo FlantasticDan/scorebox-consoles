@@ -17,7 +17,7 @@ class Volleyball (Daktronics):
         self.visitor_sets = 0
         self.current_set = 1
 
-        self.run()
+        self.runner()
     
     def export(self) -> Dict:
         '''Python Dictionary of Processed Score Data'''
