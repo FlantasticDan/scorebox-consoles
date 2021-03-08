@@ -1,3 +1,4 @@
+from consoles.cts import ColoradoTimeSystems
 from typing import Dict, Tuple
 from .daktronics import Daktronics
 
@@ -62,4 +63,25 @@ class Volleyball (Daktronics):
         potential = self.get_field(self.message, self.message_range, 142, 2)
         if potential != '':
             self.current_set = int(potential)
-        print(potential)
+
+class WaterPolo (ColoradoTimeSystems):
+    '''Water Polo as scored by a Colorado Time System 6'''
+    def __init__(self, port: str) -> None:
+        super().__init__(port)
+
+        # Scoreboard Data
+        self.home = 0
+        self.visitor = 0
+        self.clock = '0:00'
+        self.shot = '0',
+        self.period = '0'
+    
+    def export(self) -> Dict:
+        '''Python Dictionary of Processed Score Data'''
+        return {
+            'home': self.home,
+            'visitor': self.visitor,
+            'clock': self.clock,
+            'shot': self.shot,
+            'period': self.period
+        }
