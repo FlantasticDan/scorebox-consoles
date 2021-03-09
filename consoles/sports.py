@@ -77,6 +77,8 @@ class WaterPolo (ColoradoTimeSystems):
         self.clock = '0:00'
         self.shot = '0',
         self.period = '0'
+
+        self.runner()
     
     def export(self) -> Dict:
         '''Python Dictionary of Processed Score Data'''
@@ -91,26 +93,38 @@ class WaterPolo (ColoradoTimeSystems):
     def process(self, channel: int, values: List[int]) -> None:
         data = []
         valid = 0
+        # print(channel)
         for value in values:
             if value != 15 and value != '':
                 data.append(value)
                 valid += 1
             else:
                 data.append('')
+        # print(data)
         if channel == self.channels['game_time']:
-            if data[6] != '' and valid >= 4:
-                clock = f'{data[3]}:{data[4]}{data[5]}'
-            else:
-                clock = f':{data[2]}{data[3]}'
-                if valid == 2:
-                    clock = f':0{data[3]}'
-            if len(clock) > 2:
-                self.clock = clock
-        elif channel == self.channels['shot']:
-            self.shot = f'{data[4]}{data[5]}'
-        elif channel == self.channels['period_shot']:
-            if data[0] != '':
-                self.period = str(data[0]) + get_ordinal(data[0])
-        elif channel == self.channels['scores']:
-            self.home = f'{data[0]}{data[1]}'
-            self.visitor = f'{data[6]}{data[7]}'
+            # print(data)
+            if data[0] != 0:
+                if data[6] != '' and valid >= 4:
+                    clock = f'{data[3]}:{data[4]}{data[5]}'
+                else:
+                    clock = f':{data[2]}{data[3]}'
+                    if valid == 2:
+                        clock = f':0{data[3]}'
+                if len(clock) > 2:
+                    self.clock = clock
+            # if data[0] != 0 and data[6] != 0 and data[2] != 0:
+            #     clock = f'{data[2]}{data[3]}{data[4]}{data[5]}'
+            #     if len(clock) > 1:
+            #         self.clock = clock[:-2] + ':' + clock[-2:]
+            #     else:
+            #         self.clock = f':0{clock}'
+        if channel == self.channels['shot']:
+            if data[4] != 0:
+                self.shot = f'{data[4]}{data[5]}'
+        if channel == self.channels['period_shot']:
+            if data[1] != '' and data[1] > 0:
+                self.period = str(data[1]) + get_ordinal(data[1])
+        if channel == self.channels['scores']:
+            if data[0] != 0 and data[6] != 0 and data[2] != 0:
+                self.home = f'{data[0]}{data[1]}'
+                self.visitor = f'{data[6]}{data[7]}'

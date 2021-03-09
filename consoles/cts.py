@@ -11,7 +11,7 @@ class ColoradoTimeSystems (SerialConnection):
         initial = int(hexx, 16)
         # Least Significant Bit Indicates the Following Bytes are Values not Formatting
         binary_initial = bin(initial)
-        if binary_initial[-1] == '0':
+        if binary_initial[-1] != '0':
             # Shift Out the Indicator Bit
             shifted = initial >> 1
             # Mask the 5 Least Significant Bits
@@ -38,6 +38,8 @@ class ColoradoTimeSystems (SerialConnection):
         raise AssertionError('method `process` must be reimplemented for each sport.')
 
     def update(self) -> None:
+        values = [''] * 8
+        channel = 0
         while True:
             bite = self.connection.read()
             if bite:
@@ -48,17 +50,17 @@ class ColoradoTimeSystems (SerialConnection):
                     channel_potential = self.get_channel(hexx)
                     if channel_potential > 0:
                         self.process(channel, values)
-                    # Reset Channel and Digit Values
-                    channel = channel_potential
-                    values = [''] * 8
+                        # Reset Channel and Digit Values
+                        channel = channel_potential
+                        values = [''] * 8
                 else:
                     # Bytes not representing a channel are values for the preceeding channel
                     digit, value = self.get_value(hexx)
                     values[digit] = value
 
 CHANNELS = {
-    "game_time": 1,
-    "shot": 3,
-    "period_shot": 30,
-    "scores": 13
+    "game_time": 2,
+    "shot": 4,
+    "period_shot": 15,
+    "scores": 10
 }
