@@ -25,7 +25,7 @@ class Volleyball (Daktronics):
             'home_score': self.home_score,
             'visitor_score': self.visitor_score,
             'home_sets': self.home_sets,
-            'visitor_set': self.visitor_sets,
+            'visitor_sets': self.visitor_sets,
             'current_set': self.current_set
         }
     
