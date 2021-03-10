@@ -61,6 +61,10 @@ class ColoradoTimeSystems (SerialConnection):
                     digit, value = self.get_value(hexx)
                     values[digit] = value
 
+def get_channel(module: str) -> int:
+    '''Gets channel from display module.'''
+    return int(module, 16) + 1
+
 CHANNELS = {
     "game_time": 2,
     "shot": 4,
