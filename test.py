@@ -1,3 +1,7 @@
-from consoles.sports import Volleyball
+from consoles.sports import Volleyball, WaterPolo
+import time
 
-Volleyball('COM3')
+t = WaterPolo('COM6')
+while True:
+    time.sleep(1)
+    print(t.export())
