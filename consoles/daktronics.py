@@ -1,5 +1,8 @@
-from typing import Dict, Tuple
+from typing import Tuple
+import serial
 from serial import PARITY_NONE
+from multiprocessing.connection import Connection
+
 from . import SerialConnection
 
 class Daktronics (SerialConnection):
@@ -28,12 +31,13 @@ class Daktronics (SerialConnection):
             return text[item - message_range[0]: item + length - message_range[0]]
         return ''
 
-    def update(self) -> None:
+    def update(self, send_pipe: Connection, connection: serial.Serial) -> None:
         while True:
+            send_pipe.send(self.data)
             # Filter out 'SYNC IDLE' transmissions
             control_character = 0
             while control_character != b'\x16':
-                control_character = self.connection.read()
+                control_character = connection.read()
             message = ''
             last_character = b''
             # Real Time Data Messages end with a 'END TRANSMISSION BLOCK'
@@ -44,5 +48,5 @@ class Daktronics (SerialConnection):
                     message += chr(dec)
                 else:
                     pass
-                last_character = self.connection.read()
+                last_character = connection.read()
             self.parse(message)

@@ -1,6 +1,9 @@
 from typing import List, Tuple
+import serial
 from serial import PARITY_EVEN
 from . import SerialConnection
+
+from multiprocessing.connection import Connection
 
 class ColoradoTimeSystems (SerialConnection):
     '''Colorado Time System 1/4" Serial Connection Controller'''
@@ -37,11 +40,11 @@ class ColoradoTimeSystems (SerialConnection):
         '''Re-implement as the sport's channel processor'''
         raise AssertionError('method `process` must be reimplemented for each sport.')
 
-    def update(self) -> None:
+    def update(self, send_pipe: Connection, connection: serial.Serial) -> None:
         values = [''] * 8
         channel = 0
         while True:
-            bite = self.connection.read()
+            bite = connection.read()
             if bite:
                 hexx = bite.hex()
                 dec = int(hexx, 16)

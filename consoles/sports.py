@@ -8,62 +8,52 @@ class Volleyball (Daktronics):
     def __init__(self, port: str) -> None:
         super().__init__(port)
 
-        self.message = ''
-        self.message_range = (0, 0)
-
         # Scoreboard Data
-        self.home_score = 0
-        self.visitor_score = 0
-        self.home_sets = 0
-        self.visitor_sets = 0
-        self.current_set = 1
+        self.data = {
+            'home_score': 0,
+            'visitor_score': 0,
+            'home_sets': 0,
+            'visitor_sets': 0,
+            'current_set': 0
+        }
 
         self.runner()
     
     def export(self) -> Dict:
         '''Python Dictionary of Processed Score Data'''
-        return {
-            'home_score': self.home_score,
-            'visitor_score': self.visitor_score,
-            'home_sets': self.home_sets,
-            'visitor_sets': self.visitor_sets,
-            'current_set': self.current_set
-        }
+        return self.data
     
     def process(self, message: str, message_range: Tuple[int, int]) -> None:
-        self.message = message
-        self.message_range = message_range
+        self.get_home_score(message, message_range)
+        self.get_visitor_score(message, message_range)
+        self.get_home_sets(message, message_range)
+        self.get_visitor_sets(message, message_range)
+        self.get_current_set(message, message_range)
 
-        self.get_home_score()
-        self.get_visitor_score()
-        self.get_home_sets()
-        self.get_visitor_sets()
-        self.get_current_set()
-
-    def get_home_score(self) -> None:
-        potential = self.get_field(self.message, self.message_range, 108, 4)
+    def get_home_score(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 108, 4)
         if potential != '':
-            self.home_score = int(potential)
+            self.data['home_score'] = int(potential)
     
-    def get_visitor_score(self) -> None:
-        potential = self.get_field(self.message, self.message_range, 112, 4)
+    def get_visitor_score(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 112, 4)
         if potential != '':
-            self.visitor_score = int(potential)
+            self.data['visitor_score'] = int(potential)
     
-    def get_home_sets(self) -> None:
-        potential = self.get_field(self.message, self.message_range, 215, 2)
+    def get_home_sets(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 215, 2)
         if potential != '':
-            self.home_sets = int(potential)
+            self.data['home_sets'] = int(potential)
     
-    def get_visitor_sets(self) -> None:
-        potential = self.get_field(self.message, self.message_range, 217, 2)
+    def get_visitor_sets(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 217, 2)
         if potential != '':
-            self.visitor_sets = int(potential)
+            self.data['visitor_sets'] = int(potential)
     
-    def get_current_set(self) -> None:
-        potential = self.get_field(self.message, self.message_range, 142, 2)
+    def get_current_set(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 142, 2)
         if potential != '':
-            self.current_set = int(potential)
+            self.data['current_set'] = int(potential)
 
 class WaterPolo (ColoradoTimeSystems):
     '''Water Polo as scored by a Colorado Time System 6'''
@@ -72,23 +62,19 @@ class WaterPolo (ColoradoTimeSystems):
         self.channels = channels
 
         # Scoreboard Data
-        self.home = 0
-        self.visitor = 0
-        self.clock = '0:00'
-        self.shot = '0',
-        self.period = '0'
+        self.data = {
+            'home': 0,
+            'visitor': 0,
+            'clock': '0:00',
+            'shot': '',
+            'period': 0
+        }
 
         self.runner()
     
     def export(self) -> Dict:
         '''Python Dictionary of Processed Score Data'''
-        return {
-            'home': self.home,
-            'visitor': self.visitor,
-            'clock': self.clock,
-            'shot': self.shot,
-            'period': self.period
-        }
+        return self.data
     
     def process(self, channel: int, values: List[int]) -> None:
         data = []
@@ -111,7 +97,7 @@ class WaterPolo (ColoradoTimeSystems):
                     if valid == 2:
                         clock = f':0{data[3]}'
                 if len(clock) > 2:
-                    self.clock = clock
+                    self.data['clock'] = clock
             # if data[0] != 0 and data[6] != 0 and data[2] != 0:
             #     clock = f'{data[2]}{data[3]}{data[4]}{data[5]}'
             #     if len(clock) > 1:
@@ -120,11 +106,11 @@ class WaterPolo (ColoradoTimeSystems):
             #         self.clock = f':0{clock}'
         if channel == self.channels['shot']:
             if data[4] != 0:
-                self.shot = f'{data[4]}{data[5]}'
+                self.data['shot'] = f'{data[4]}{data[5]}'
         if channel == self.channels['period_shot']:
             if data[1] != '' and data[1] > 0:
-                self.period = str(data[1]) + get_ordinal(data[1])
+                self.data['period'] = str(data[1]) + get_ordinal(data[1])
         if channel == self.channels['scores']:
             if data[0] != 0 and data[6] != 0 and data[2] != 0:
-                self.home = f'{data[0]}{data[1]}'
-                self.visitor = f'{data[6]}{data[7]}'
+                self.data['home'] = f'{data[0]}{data[1]}'
+                self.data['visitor'] = f'{data[6]}{data[7]}'
