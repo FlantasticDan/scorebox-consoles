@@ -2,7 +2,7 @@ from multiprocessing.connection import Connection
 from typing import Dict
 import serial
 from threading import Thread
-from multiprocessing import Process, Pipe, freeze_support
+from multiprocessing import Process, Pipe
 
 class SerialConnection:
     '''Low Level Serial Connection to Scoreboard.'''

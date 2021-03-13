@@ -114,3 +114,55 @@ class WaterPolo (ColoradoTimeSystems):
             if data[0] != 0 and data[6] != 0 and data[2] != 0:
                 self.data['home'] = f'{data[0]}{data[1]}'
                 self.data['visitor'] = f'{data[6]}{data[7]}'
+
+class WaterPoloDaktronics(Daktronics):
+    '''Water Polo as scored by a Daktronics All Sport 5000'''
+    def __init__(self, port: str) -> None:
+        super().__init__(port)
+
+        # Scoreboard Data
+        self.data = {
+            'home_score': 0,
+            'visitor_score': 0,
+            'clock': '0:00',
+            'shot': '',
+            'period': 0
+        }
+
+        self.runner()
+    
+    def export(self) -> Dict:
+        '''Python Dictionary of Processed Score Data'''
+        return self.data
+    
+    def process(self, message: str, message_range: Tuple[int, int]) -> None:
+        self.get_home_score(message, message_range)
+        self.get_visitor_score(message, message_range)
+        self.get_clock(message, message_range)
+        self.get_shot_clock(message, message_range)
+        self.get_period(message, message_range)
+    
+    def get_home_score(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 108, 4)
+        if potential != '':
+            self.data['home_score'] = int(potential)
+    
+    def get_visitor_score(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 112, 4)
+        if potential != '':
+            self.data['visitor_score'] = int(potential)
+    
+    def get_clock(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 1, 5)
+        if potential != '':
+            self.data['clock'] = potential.lstrip()
+    
+    def get_shot_clock(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 201, 8)
+        if potential != '':
+            self.data['shot'] = int(potential)
+    
+    def get_period(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 142, 2)
+        if potential != '':
+            self.data['period'] = int(potential)

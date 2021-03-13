@@ -1,8 +1,8 @@
-from consoles.sports import Volleyball, WaterPolo
+from consoles.sports import Volleyball, WaterPolo, WaterPoloDaktronics
 import time
 
 if __name__ == '__main__':
-    t = Volleyball('COM4')
+    t = WaterPoloDaktronics('COM5')
     print()
     while True:
         time.sleep(0.1)
