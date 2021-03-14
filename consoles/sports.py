@@ -160,7 +160,7 @@ class WaterPoloDaktronics (Daktronics):
     def get_shot_clock(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 201, 8)
         if potential != '':
-            self.data['shot'] = int(potential)
+            self.data['shot'] = potential.lstrip().replace("0:", "").rstrip().rstrip('z')
     
     def get_period(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 142, 2)
@@ -228,7 +228,7 @@ class Football (Daktronics):
     def get_play_clock(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 201, 8)
         if potential != '':
-            self.data['play'] = potential.lstrip().replace("0:", "").rstrip()
+            self.data['play'] = potential.lstrip().replace("0:", "").rstrip().rstrip('z')
     
     def get_quarter(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 142, 2)
@@ -274,3 +274,126 @@ class Football (Daktronics):
         potential = self.get_field(message, message_range, 311, 4)
         if potential != '':
             self.data['flag'] = potential == 'FLAG'
+
+class Basketball (Daktronics):
+    '''Basketball as scored by a Daktronics All Sport 5000'''
+    def __init__(self, port: str) -> None:
+        super().__init__(port)
+
+        # Scoreboard Data
+        self.data = {
+            'home_score': 0,
+            'visitor_score': 0,
+            'home_timeouts': 0,
+            'visitor_timeouts': 0,
+            'clock': '0:00',
+            'shot': 0,
+            'period': 0,
+            'home_possesion': False,
+            'visitor_possesion': False,
+            'home_fouls': 0,
+            'home_bonus': False,
+            'home_double_bonus': False,
+            'visitor_fouls': 0,
+            'visitor_bonus': False,
+            'visitor_double_bonus': False
+        }
+
+        self.runner()
+    
+    def export(self) -> Dict:
+        '''Python Dictionary of Processed Score Data'''
+        return self.data
+    
+    def process(self, message: str, message_range: Tuple[int, int]) -> None:
+        self.get_home_score(message, message_range)
+        self.get_visitor_score(message, message_range)
+        self.get_home_timeouts(message, message_range)
+        self.get_visitor_timeouts(message, message_range)
+        self.get_home_possesion(message, message_range)
+        self.get_visitor_possesion(message, message_range)
+        self.get_clock(message, message_range)
+        self.get_shot_clock(message, message_range)
+        self.get_period(message, message_range)
+        self.get_home_bonus(message, message_range)
+        self.get_visitor_bonus(message, message_range)
+        self.get_home_double_bonus(message, message_range)
+        self.get_visitor_double_bonus(message, message_range)
+        self.get_home_fouls(message, message_range)
+        self.get_visitor_fouls(message, message_range)
+
+    def get_home_score(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 108, 4)
+        if potential != '':
+            self.data['home_score'] = int(potential)
+    
+    def get_visitor_score(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 112, 4)
+        if potential != '':
+            self.data['visitor_score'] = int(potential)
+    
+    def get_clock(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 1, 5)
+        if potential != '':
+            self.data['clock'] = potential.lstrip().rstrip()
+    
+    def get_shot_clock(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 201, 8)
+        if potential != '':
+            self.data['shot'] = potential.lstrip().replace("0:", "").rstrip().rstrip('z')
+    
+    def get_period(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 142, 2)
+        if potential != '':
+            self.data['period'] = int(potential)
+
+    def get_home_timeouts(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 122, 2)
+        if potential != '':
+            self.data['home_timeouts'] = int(potential)
+
+    def get_visitor_timeouts(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 130, 2)
+        if potential != '':
+            self.data['visitor_timeouts'] = int(potential)
+    
+    def get_home_possesion(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 210, 1)
+        if potential != '':
+            self.data['home_possesion'] = potential == '<'
+    
+    def get_visitor_possesion(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 216, 1)
+        if potential != '':
+            self.data['visitor_possesion'] = potential == '>'
+    
+    def get_home_bonus(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 222, 1)
+        if potential != '':
+            self.data['home_bonus'] = potential == '<'
+    
+    def get_home_double_bonus(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 223, 1)
+        if potential != '':
+            self.data['home_double_bonus'] = potential == '<'
+    
+    def get_visitor_bonus(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 229, 1)
+        if potential != '':
+            self.data['visitor_bonus'] = potential == '>'
+    
+    def get_visitor_double_bonus(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 230, 1)
+        if potential != '':
+            self.data['visitor_double_bonus'] = potential == '>'
+    
+    def get_home_fouls(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 236, 2)
+        if potential != '':
+            self.data['home_fouls'] = int(potential)
+    
+    def get_visitor_fouls(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 238, 2)
+        if potential != '':
+            self.data['visitor_fouls'] = int(potential)
+    
