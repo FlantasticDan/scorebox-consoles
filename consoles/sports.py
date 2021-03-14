@@ -63,8 +63,8 @@ class WaterPolo (ColoradoTimeSystems):
 
         # Scoreboard Data
         self.data = {
-            'home': 0,
-            'visitor': 0,
+            'home_score': 0,
+            'visitor_score': 0,
             'clock': '0:00',
             'shot': '',
             'period': 0
