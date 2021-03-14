@@ -115,7 +115,7 @@ class WaterPolo (ColoradoTimeSystems):
                 self.data['home'] = f'{data[0]}{data[1]}'
                 self.data['visitor'] = f'{data[6]}{data[7]}'
 
-class WaterPoloDaktronics(Daktronics):
+class WaterPoloDaktronics (Daktronics):
     '''Water Polo as scored by a Daktronics All Sport 5000'''
     def __init__(self, port: str) -> None:
         super().__init__(port)
@@ -166,3 +166,111 @@ class WaterPoloDaktronics(Daktronics):
         potential = self.get_field(message, message_range, 142, 2)
         if potential != '':
             self.data['period'] = int(potential)
+
+class Football (Daktronics):
+    '''Football as scored by a Daktronics All Sport 5000'''
+    def __init__(self, port: str) -> None:
+        super().__init__(port)
+
+        # Scoreboard Data
+        self.data = {
+            'home_score': 0,
+            'visitor_score': 0,
+            'home_timeouts': 0,
+            'visitor_timeouts': 0,
+            'clock': '0:00',
+            'play': 0,
+            'quarter': 0,
+            'down': '',
+            'to_go': 0,
+            'ball_on': 0,
+            'home_possesion': False,
+            'visitor_possesion': False,
+            'flag': False
+        }
+
+        self.runner()
+    
+    def export(self) -> Dict:
+        '''Python Dictionary of Processed Score Data'''
+        return self.data
+    
+    def process(self, message: str, message_range: Tuple[int, int]) -> None:
+        self.get_home_score(message, message_range)
+        self.get_visitor_score(message, message_range)
+        self.get_home_timeouts(message, message_range)
+        self.get_visitor_timeouts(message, message_range)
+        self.get_home_possesion(message, message_range)
+        self.get_visitor_possesion(message, message_range)
+        self.get_clock(message, message_range)
+        self.get_play_clock(message, message_range)
+        self.get_ball_on(message, message_range)
+        self.get_to_go(message, message_range)
+        self.get_down(message, message_range)
+        self.get_quarter(message, message_range)
+        self.get_flag(message, message_range)
+
+    def get_home_score(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 108, 4)
+        if potential != '':
+            self.data['home_score'] = int(potential)
+    
+    def get_visitor_score(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 112, 4)
+        if potential != '':
+            self.data['visitor_score'] = int(potential)
+    
+    def get_clock(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 1, 5)
+        if potential != '':
+            self.data['clock'] = potential.lstrip().rstrip()
+    
+    def get_play_clock(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 201, 8)
+        if potential != '':
+            self.data['play'] = potential.lstrip().replace("0:", "").rstrip()
+    
+    def get_quarter(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 142, 2)
+        if potential != '':
+            self.data['quarter'] = int(potential)
+
+    def get_home_timeouts(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 122, 2)
+        if potential != '':
+            self.data['home_timeouts'] = int(potential)
+
+    def get_visitor_timeouts(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 130, 2)
+        if potential != '':
+            self.data['visitor_timeouts'] = int(potential)
+    
+    def get_home_possesion(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 210, 1)
+        if potential != '':
+            self.data['home_possesion'] = potential == '<'
+    
+    def get_visitor_possesion(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 215, 1)
+        if potential != '':
+            self.data['visitor_possesion'] = potential == '>'
+    
+    def get_down(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 222, 3)
+        if potential != '':
+            self.data['down'] = potential
+    
+    def get_to_go(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 225, 2)
+        if potential != '':
+            self.data['to_go'] = int(potential)
+    
+    def get_ball_on(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 220, 2)
+        if potential != '':
+            self.data['ball_on'] = int(potential)
+    
+    def get_flag(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 311, 4)
+        if potential != '':
+            self.data['flag'] = potential == 'FLAG'
