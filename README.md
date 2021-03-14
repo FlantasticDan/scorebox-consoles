@@ -1,4 +1,4 @@
-# scorebox-consoles
+# ScoreBox Consoles
 [![PyPI version](https://badge.fury.io/py/scorebox-consoles.svg)](https://badge.fury.io/py/scorebox-consoles)
 
 Python interface for scoreboard consoles manufactured by Daktronics and Colorado Time Systems
@@ -23,6 +23,7 @@ if __name__ == '__main__':
     basketball = Basketball('COM1')
     game_state = basketball.export()
 ```
+*Call to sport class must be protected by a `if __name__ == '__main__'` because the serial connection is read in a seperate process*
 
 ### Connecting a Console
 Consoles are connected with via a Serial to USB cable.
