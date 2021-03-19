@@ -23,7 +23,7 @@ if __name__ == '__main__':
     basketball = Basketball('COM1')
     game_state = basketball.export()
 ```
-*Call to sport class must be protected by a `if __name__ == '__main__'` because the serial connection is read in a seperate process*
+*Call to sport class must be protected by an `if __name__ == '__main__'` because the serial connection is read in a seperate process*
 
 ### Connecting a Console
 Consoles are connected with via a Serial to USB cable.
@@ -57,7 +57,7 @@ Sport classes take a serial port string as an argument and expose an `export` me
 | `clock` | str | Main Clock Time |
 | `play` | str | Play Clock Time |
 | `quarter` | str | Game Quarter |
-| `down` | str | Down Number (include ordination [ex. `1ST`]) |
+| `down` | str | Down Number (includes ordination [ex. `1ST`]) |
 | `to_go`| int | Yards For First Down |
 | `ball_on` | int | Ball Location on the Field (does not include side of field) |
 | `flag` | bool | Flag Status (only updated on console button push) |

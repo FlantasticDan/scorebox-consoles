@@ -91,10 +91,6 @@ class WaterPolo (ColoradoTimeSystems):
                 data_format.append(value)
             else:
                 data_format.append('')
-        # if channel == get_channel('1'):
-        #     print(channel)
-        #     print(data)
-        #     print(data_format)
         if channel == self.channels['game_time']:
             minutes = ''
             seconds = ''
