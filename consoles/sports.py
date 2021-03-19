@@ -165,7 +165,7 @@ class WaterPoloDaktronics (Daktronics):
     def get_period(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 142, 2)
         if potential != '':
-            self.data['period'] = int(potential)
+            self.data['period'] = potential + get_ordinal(int(potential))
 
 class Football (Daktronics):
     '''Football as scored by a Daktronics All Sport 5000'''
@@ -233,7 +233,7 @@ class Football (Daktronics):
     def get_quarter(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 142, 2)
         if potential != '':
-            self.data['quarter'] = int(potential)
+            self.data['quarter'] = potential + get_ordinal(int(potential))
 
     def get_home_timeouts(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 122, 2)
@@ -345,7 +345,7 @@ class Basketball (Daktronics):
     def get_period(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 142, 2)
         if potential != '':
-            self.data['period'] = int(potential)
+            self.data['period'] = potential + get_ordinal(int(potential))
 
     def get_home_timeouts(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 122, 2)
