@@ -46,7 +46,7 @@ Sport classes take a serial port string as an argument and expose an `export` me
 | `{home/visitor}_double_bonus` | bool | Team Double Bonus (2 shots) Status |
 | `clock` | str | Main Clock Time (excludes timeout time), Tenths shown under 1 minute if configured in console settings |
 | `shot` | str | Shot Clock Time, Tenths shown under 5 seconds if configured in console settings |
-| `period` | int | Game Period |
+| `period` | str | Game Period |
 
 #### :football: Football
 | Key | Type | Description |
@@ -56,7 +56,7 @@ Sport classes take a serial port string as an argument and expose an `export` me
 | `{home/visitor}_possesion` | bool | Team Possesion Status |
 | `clock` | str | Main Clock Time |
 | `play` | str | Play Clock Time |
-| `quarter` | int | Game Quarter |
+| `quarter` | str | Game Quarter |
 | `down` | str | Down Number (include ordination [ex. `1ST`]) |
 | `to_go`| int | Yards For First Down |
 | `ball_on` | int | Ball Location on the Field (does not include side of field) |
@@ -75,4 +75,4 @@ Sport classes take a serial port string as an argument and expose an `export` me
 | `{home/visitor}_score` | int | Team Score |
 | `clock` | str | Main Clock Time |
 | `shot` | str | Shot Clock Time |
-| `period` | int | Game Period |
+| `period` | str | Game Period |
