@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="scorebox-consoles",
-    version="1.0.0",
+    version="1.1.0-alpha",
     author="Daniel Flanagan",
     description="Python interface for scoreboard consoles manufactured by Daktronics and Colorado Time Systems",
     long_description=long_description,

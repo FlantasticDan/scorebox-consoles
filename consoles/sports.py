@@ -137,7 +137,10 @@ class WaterPolo (ColoradoTimeSystems):
                     seconds += str(data[i])
                 else:
                     mseconds += str(data[i])
-            if len(seconds) > 0 and int(seconds) < 31:
+            if len(seconds) > 0 and int(seconds) < 31 and data_format.count(2) == 1 and data_format[-3] == 2 and data[-4] != 0 and data[-3] != '':
+                # print(data)
+                # print(data_format)
+                # print(seconds)
                 self.data['shot'] = seconds
         if channel == self.channels['period_shot']:
             decimal = False

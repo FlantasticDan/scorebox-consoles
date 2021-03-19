@@ -6,4 +6,4 @@ if __name__ == '__main__':
     print()
     while True:
         time.sleep(0.1)
-        print(t.export(), end='\r')
+        # print(t.export(), end='\r')
