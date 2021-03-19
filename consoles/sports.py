@@ -1,6 +1,6 @@
 from typing import Dict, List, Tuple
 from .daktronics import Daktronics
-from .cts import ColoradoTimeSystems, CHANNELS
+from .cts import ColoradoTimeSystems, CHANNELS, get_channel
 from .util import get_ordinal
 
 class Volleyball (Daktronics):
@@ -76,44 +76,89 @@ class WaterPolo (ColoradoTimeSystems):
         '''Python Dictionary of Processed Score Data'''
         return self.data
     
-    def process(self, channel: int, values: List[int]) -> None:
+    def process(self, channel: int, values: List[int], formats: List[int]) -> None:
         data = []
+        data_format = []
         valid = 0
-        # print(channel)
         for value in values:
             if value != 15 and value != '':
                 data.append(value)
                 valid += 1
             else:
                 data.append('')
-        # print(data)
+        for value in formats:
+            if value != 0 and value != '':
+                data_format.append(value)
+            else:
+                data_format.append('')
+        # if channel == get_channel('1'):
+        #     print(channel)
+        #     print(data)
+        #     print(data_format)
         if channel == self.channels['game_time']:
-            # print(data)
-            if data[0] != 0:
-                if data[6] != '' and valid >= 4:
-                    clock = f'{data[3]}:{data[4]}{data[5]}'
-                else:
-                    clock = f':{data[2]}{data[3]}'
-                    if valid == 2:
-                        clock = f':0{data[3]}'
-                if len(clock) > 2:
-                    self.data['clock'] = clock
-            # if data[0] != 0 and data[6] != 0 and data[2] != 0:
-            #     clock = f'{data[2]}{data[3]}{data[4]}{data[5]}'
-            #     if len(clock) > 1:
-            #         self.clock = clock[:-2] + ':' + clock[-2:]
-            #     else:
-            #         self.clock = f':0{clock}'
+            minutes = ''
+            seconds = ''
+            mseconds = '' 
+            colon = False
+            decimal = False
+            if data_format.count(2) > 1:
+                for i in range(8):
+                    if data_format[i] != 2 and not colon:
+                        minutes += str(data[i])
+                        continue
+                    elif data_format[i] == 2:
+                        colon = True
+                        seconds += str(data[i])
+                    else:
+                        mseconds += str(data[i])
+            else:
+                for i in range(8):
+                    if data_format[i] != 2 and not decimal:
+                        seconds += str(data[i])
+                    elif data_format[i] == 2:
+                        decimal = True
+                        seconds += str(data[i])
+                    else:
+                        mseconds += str(data[i])
+            if len(seconds) > 1:
+                self.data['clock'] = f'{minutes}:{seconds}'
+            elif len(seconds) == 1:
+                self.data['clock'] = f'{minutes}:0{seconds}'
+
         if channel == self.channels['shot']:
-            if data[4] != 0:
-                self.data['shot'] = f'{data[4]}{data[5]}'
+            decimal = False
+            seconds = ''
+            mseconds = ''
+            for i in range(8):
+                if data_format[i] != 2 and not decimal:
+                    seconds += str(data[i])
+                elif data_format[i] == 2:
+                    decimal = True
+                    seconds += str(data[i])
+                else:
+                    mseconds += str(data[i])
+            if len(seconds) > 0 and int(seconds) < 31 and data_format.count(2) == 1 and data_format[-3] == 2 and data[-4] != 0 and data[-3] != '':
+                self.data['shot'] = seconds
         if channel == self.channels['period_shot']:
+            decimal = False
+            seconds = ''
+            mseconds = ''
+            for i in range(3, 8):
+                if data_format[i] != 2 and not decimal:
+                    seconds += str(data[i])
+                elif data_format[i] == 2:
+                    decimal = True
+                    seconds += str(data[i])
+                else:
+                    mseconds += str(data[i])
+            if len(seconds) > 0 and int(seconds) < 31 and data_format[3:].count(2) == 1 and data_format[-3] == 2 and data[-4] != 0 and data[-3] != '':
+                self.data['shot'] = seconds
             if data[1] != '' and data[1] > 0:
                 self.data['period'] = str(data[1]) + get_ordinal(data[1])
         if channel == self.channels['scores']:
             if data[0] != 0 and data[6] != 0 and data[2] != 0:
-                self.data['home'] = f'{data[0]}{data[1]}'
-                self.data['visitor'] = f'{data[6]}{data[7]}'
+                self.data['home_score'] = f'{data[0]}{data[1]}'
+                self.data['visitor_score'] = f'{data[6]}{data[7]}'
 
 class WaterPoloDaktronics (Daktronics):
     '''Water Polo as scored by a Daktronics All Sport 5000'''

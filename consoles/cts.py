@@ -15,14 +15,16 @@ class ColoradoTimeSystems (SerialConnection):
         # Least Significant Bit Indicates the Following Bytes are Values not Formatting
         binary_initial = bin(initial)
         if binary_initial[-1] != '0':
-            # Shift Out the Indicator Bit
-            shifted = initial >> 1
-            # Mask the 5 Least Significant Bits
-            masked = shifted & 31
-            # Exclusive OR (XOR) Mask for Address
-            return masked ^ 31
+            indicator = 1
         else:
-            return 0
+            indicator = -1
+        
+        # Shift Out the Indicator Bit
+        shifted = initial >> 1
+        # Mask the 5 Least Significant Bits
+        masked = shifted & 31
+        # Exclusive OR (XOR) Mask for Address
+        return (masked ^ 31) * indicator
 
     def get_value(self, hexx: hex) -> Tuple[int, int]:
         initial = int(hexx, 16)
@@ -36,12 +38,13 @@ class ColoradoTimeSystems (SerialConnection):
         value = raw_value ^ 15
         return digit, value
     
-    def process(self, channel: int, values: List[int]) -> None:
+    def process(self, channel: int, values: List[int], formats: List[int]) -> None:
         '''Re-implement as the sport's channel processor'''
         raise AssertionError('method `process` must be reimplemented for each sport.')
 
     def update(self, send_pipe: Connection, connection: serial.Serial) -> None:
         values = [''] * 8
+        formats = [''] * 8
         channel = 0
         while True:
             bite = connection.read()
@@ -51,23 +54,30 @@ class ColoradoTimeSystems (SerialConnection):
                 # Channels are encoded as > 127 decimals
                 if dec > 127:
                     channel_potential = self.get_channel(hexx)
-                    if channel_potential > 0:
-                        self.process(channel, values)
+                    if channel_potential < 0 and abs(channel_potential) != abs(channel):
+                        self.process(channel, values, formats)
+                        send_pipe.send(self.data)
                         # Reset Channel and Digit Values
                         channel = channel_potential
                         values = [''] * 8
+                        formats = [''] * 8
+                    else:
+                        channel = channel_potential
                 else:
                     # Bytes not representing a channel are values for the preceeding channel
                     digit, value = self.get_value(hexx)
-                    values[digit] = value
+                    if channel > 0:
+                        formats[digit] = value
+                    else:
+                        values[digit] = value
 
 def get_channel(module: str) -> int:
     '''Gets channel from display module.'''
-    return int(module, 16) + 1
+    return int(module, 16)
 
 CHANNELS = {
-    "game_time": 2,
-    "shot": 4,
-    "period_shot": 15,
-    "scores": 10
+    "game_time": get_channel('01'),
+    "shot": get_channel('03'),
+    "period_shot": get_channel('0e'),
+    "scores": get_channel('0d')
 }
