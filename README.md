@@ -76,3 +76,6 @@ Sport classes take a serial port string as an argument and expose an `export` me
 | `clock` | str | Main Clock Time |
 | `shot` | str | Shot Clock Time |
 | `period` | str | Game Period |
+
+#### :swimmer: Swimming
+*Work in Progress*

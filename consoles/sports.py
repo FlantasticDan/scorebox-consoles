@@ -437,4 +437,114 @@ class Basketball (Daktronics):
         potential = self.get_field(message, message_range, 238, 2)
         if potential != '':
             self.data['visitor_fouls'] = int(potential)
+
+class Swimming (ColoradoTimeSystems):
+    '''Swimming as scored by a Colorado Time System 6'''
+    def __init__(self, port: str) -> None:
+        super().__init__(port)
+
+        # Scoreboard Data
+        self.data = {
+            'event': 0,
+            '1': {
+                'place': 0,
+                'time': '0:00'
+            },
+            '2': {
+                'place': 0,
+                'time': '0:00'
+            },
+            '3': {
+                'place': 0,
+                'time': '0:00'
+            },
+            '4': {
+                'place': 0,
+                'time': '0:00'
+            },
+            '5': {
+                'place': 0,
+                'time': '0:00'
+            },
+            '6': {
+                'place': 0,
+                'time': '0:00'
+            },
+            '7': {
+                'place': 0,
+                'time': '0:00'
+            },
+            '8': {
+                'place': 0,
+                'time': '0:00'
+            },
+            '9': {
+                'place': 0,
+                'time': '0:00'
+            },
+            'event': 0,
+            'heat': 0,
+            'running_time': '0:00'
+        }
+
+        self.runner()
     
+    def export(self) -> Dict:
+        '''Python Dictionary of Processed Score Data'''
+        return self.data
+    
+    def process(self, channel: int, values: List[int], formats: List[int]) -> None:
+        data = []
+        data_format = []
+        valid = 0
+        for value in values:
+            if value != 15 and value != '':
+                data.append(value)
+                valid += 1
+            else:
+                data.append('')
+        for value in formats:
+            if value != 0 and value != '':
+                data_format.append(value)
+            else:
+                data_format.append('')
+        # print(f'Channel {channel} - {data} - {data_format}')
+
+        if int(channel) == 0:
+            self.process_running_time(data, data_format)
+        elif int(channel) in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
+            self.process_lane(data, data_format)
+        elif int(channel) == 12:
+            self.process_event(data, data_format)
+    
+    def process_lane(self, data, data_format):
+        if data_format[4] != 2 or data_format[5] != 2:
+            return
+
+        if data[0] != '':
+            lane = str(data[0])
+            place = data[1]
+
+        minutes = str(data[2]) + str(data[3])
+        seconds = str(data[4]) + str(data[5])
+        milliseconds = str(data[6]) + str(data[7])
+        if lane in self.data.keys() and milliseconds != '':
+            self.data[lane]['place'] = place
+            self.data[lane]['time'] = f'{minutes}:{seconds}.{milliseconds}'
+    
+    def process_event(self, data, data_format):
+        if data[3] != '' or data[4] != '':
+            return
+
+        self.data['event'] = str(data[0]) + str(data[1]) + str(data[2])
+        self.data['heat'] = str(data[5]) + str(data[6]) + str(data[7])
+    
+    def process_running_time(self, data, data_format):
+        minutes = str(data[2]) + str(data[3])
+        seconds = str(data[4]) + str(data[5])
+        milliseconds = str(data[6]) + str(data[7])
+        if milliseconds != '':
+            if minutes != '':
+                self.data['running_time'] = f'{minutes}:{seconds}.{milliseconds}'
+            else:
+                self.data['running_time'] = f'{seconds}.{milliseconds}'
