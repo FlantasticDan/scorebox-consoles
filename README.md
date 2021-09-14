@@ -95,4 +95,5 @@ if __name__ == '__main__':
 | `clock` | str | Main Clock Time |
 | `shot` | str | Shot Clock Time |
 | `period` | str | Game Period |
+
 *Water Polo is supported on both Daktronics and Colorado Time Systems consoles: for Daktronics call `WaterPoloDaktronics`, for Colorado Time Systems call `WaterPolo`*
