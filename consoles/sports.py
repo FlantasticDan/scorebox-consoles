@@ -461,10 +461,38 @@ class Wrestling (Daktronics):
     
     def process(self, message: str, message_range: Tuple[int, int]) -> None:
         self.get_clock(message, message_range)
+        self.get_home_match_score(message, message_range)
+        self.get_visitor_match_score(message, message_range)
+        self.get_home_team_score(message, message_range)
+        self.get_visitor_team_score(message, message_range)
+        self.get_period(message, message_range)
     
     def get_clock(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 1, 5)
         if potential != '':
             self.data['clock'] = potential.lstrip().rstrip()
     
+    def get_home_match_score(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 279, 2)
+        if potential != '':
+            self['home_match_score'] = int(potential)
     
+    def get_visitor_match_score(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 281, 2)
+        if potential != '':
+            self['visitor_match_score'] = int(potential)
+
+    def get_home_team_score(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 108, 4)
+        if potential != '':
+            self['home_team_score'] = int(potential)
+    
+    def get_visitor_team_score(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 112, 4)
+        if potential != '':
+            self['visitor_team_score'] = int(potential)
+    
+    def get_period(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 142, 2)
+        if potential != '':
+            self.data['period'] = potential + get_ordinal(int(potential))
