@@ -437,4 +437,34 @@ class Basketball (Daktronics):
         potential = self.get_field(message, message_range, 238, 2)
         if potential != '':
             self.data['visitor_fouls'] = int(potential)
+
+class Wrestling (Daktronics):
+    '''Wrestling as scored by a Daktronics All Sport 5000'''
+    def __init__(self, port: str) -> None:
+        super().__init__(port)
+
+        # Scoreboard Data
+        self.data = {
+            'clock': '0:00',
+            'home_match_score': 0,
+            'visitor_match_score': 0,
+            'home_team_score': 0,
+            'visitor_team_score': 0,
+            'period': 0
+        }
+
+        self.runner()
+    
+    def export(self) -> Dict:
+        '''Python Dictionary of Processed Score Data'''
+        return self.data
+    
+    def process(self, message: str, message_range: Tuple[int, int]) -> None:
+        self.get_clock(message, message_range)
+    
+    def get_clock(self, message, message_range) -> None:
+        potential = self.get_field(message, message_range, 1, 5)
+        if potential != '':
+            self.data['clock'] = potential.lstrip().rstrip()
+    
     

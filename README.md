@@ -9,6 +9,7 @@ Python interface for scoreboard consoles manufactured by Daktronics and Colorado
     - :football: Football
     - :volleyball: Volleyball
     - :water_polo: Water Polo
+    - :wrestling: Wrestling
 - Colorado Time Systems System 6
     - :water_polo: Water Polo
 
