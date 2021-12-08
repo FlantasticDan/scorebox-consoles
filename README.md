@@ -98,3 +98,11 @@ if __name__ == '__main__':
 | `period` | str | Game Period |
 
 *Water Polo is supported on both Daktronics and Colorado Time Systems consoles: for Daktronics call `WaterPoloDaktronics`, for Colorado Time Systems call `WaterPolo`*
+
+#### :wrestling: Wrestling
+| Key | Type | Description |
+| --- | --- | --- |
+| `{home/visitor}_team_score` | int | Team Score |
+| `{home/visitor}_match_score` | int | Match Score |
+| `clock` | str | Main Clock Time |
+| `period` | str | Game Period |
