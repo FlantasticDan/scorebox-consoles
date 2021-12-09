@@ -475,22 +475,22 @@ class Wrestling (Daktronics):
     def get_home_match_score(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 279, 2)
         if potential != '':
-            self['home_match_score'] = int(potential)
+            self.data['home_match_score'] = int(potential)
     
     def get_visitor_match_score(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 281, 2)
         if potential != '':
-            self['visitor_match_score'] = int(potential)
+            self.data['visitor_match_score'] = int(potential)
 
     def get_home_team_score(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 108, 4)
         if potential != '':
-            self['home_team_score'] = int(potential)
+            self.data['home_team_score'] = int(potential)
     
     def get_visitor_team_score(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 112, 4)
         if potential != '':
-            self['visitor_team_score'] = int(potential)
+            self.data['visitor_team_score'] = int(potential)
     
     def get_period(self, message, message_range) -> None:
         potential = self.get_field(message, message_range, 142, 2)
