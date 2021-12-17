@@ -9,6 +9,7 @@ Python interface for scoreboard consoles manufactured by Daktronics and Colorado
     - :football: Football
     - :volleyball: Volleyball
     - :water_polo: Water Polo
+    - :wrestling: Wrestling
 - Colorado Time Systems System 6
     - :water_polo: Water Polo
 
@@ -23,10 +24,10 @@ if __name__ == '__main__':
     basketball = Basketball('COM1')
     game_state = basketball.export()
 ```
-*Calls to sport class must be protected by an `if __name__ == '__main__'` because the serial connection is read in a seperate process*
+*Calls to sport classes must be protected by an `if __name__ == '__main__'` because the serial connection is read in a seperate process*
 
 ### Connecting a Console
-Consoles are connected with via a Serial to USB cable.
+Consoles are connected with a Serial to USB cable.
 
 **Daktronics All Sport 5000** - Connect to the port labeled I/O Port (J6) with a DB25 to DB9 Serial connector
 
@@ -97,3 +98,11 @@ if __name__ == '__main__':
 | `period` | str | Game Period |
 
 *Water Polo is supported on both Daktronics and Colorado Time Systems consoles: for Daktronics call `WaterPoloDaktronics`, for Colorado Time Systems call `WaterPolo`*
+
+#### :wrestling: Wrestling
+| Key | Type | Description |
+| --- | --- | --- |
+| `{home/visitor}_team_score` | int | Team Score |
+| `{home/visitor}_match_score` | int | Match Score |
+| `clock` | str | Main Clock Time |
+| `period` | str | Match Period |
