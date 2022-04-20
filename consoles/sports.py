@@ -445,7 +445,6 @@ class Swimming (ColoradoTimeSystems):
 
         # Scoreboard Data
         self.data = {
-            'event': 0,
             '1': {
                 'place': 0,
                 'split': ''
@@ -529,15 +528,26 @@ class Swimming (ColoradoTimeSystems):
             seconds = str(data[4]) + str(data[5])
             milliseconds = str(data[6]) + str(data[7])
             if lane in self.data.keys() and milliseconds != '' and len(milliseconds) >= 2:
-                self.data[lane]['place'] = place
                 self.data[lane]['split'] = f'{minutes}:{seconds}.{milliseconds}'
+                if place:
+                    self.data[lane]['place'] = int(place)
+                else:
+                    self.data[lane]['place'] = 0
     
     def process_event(self, data, data_format):
         if data[3] != '' or data[4] != '':
             return
 
-        self.data['event'] = str(data[0]) + str(data[1]) + str(data[2])
-        self.data['heat'] = str(data[5]) + str(data[6]) + str(data[7])
+        event = str(data[0]) + str(data[1]) + str(data[2])
+        if event:
+            self.data['event'] = int(event)
+        else:
+            self.data['event'] = 0
+        heat = str(data[5]) + str(data[6]) + str(data[7])
+        if heat:
+            self.data['heat'] = int(heat)
+        else:
+            self.data['heat'] = 0
     
     def process_running_time(self, data, data_format):
         minutes = str(data[2]) + str(data[3])

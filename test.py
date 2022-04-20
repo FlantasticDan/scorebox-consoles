@@ -13,5 +13,5 @@ if __name__ == '__main__':
         la = data['1']
         lb = data['3']
         lc = data['5']
-        print(f'E{event} H{heat} - LA {la} - LB {lb} - LC {lc}')
-        # print(data['running_time'],end='\r')
+        # print(f'E{event} H{heat} - LA {la} - LB {lb} - LC {lc}')
+        print(data['time'],end='\r')
