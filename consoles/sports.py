@@ -448,43 +448,43 @@ class Swimming (ColoradoTimeSystems):
             'event': 0,
             '1': {
                 'place': 0,
-                'time': '0:00'
+                'split': ''
             },
             '2': {
                 'place': 0,
-                'time': '0:00'
+                'split': ''
             },
             '3': {
                 'place': 0,
-                'time': '0:00'
+                'split': ''
             },
             '4': {
                 'place': 0,
-                'time': '0:00'
+                'split': ''
             },
             '5': {
                 'place': 0,
-                'time': '0:00'
+                'split': ''
             },
             '6': {
                 'place': 0,
-                'time': '0:00'
+                'split': ''
             },
             '7': {
                 'place': 0,
-                'time': '0:00'
+                'split': ''
             },
             '8': {
                 'place': 0,
-                'time': '0:00'
+                'split': ''
             },
             '9': {
                 'place': 0,
-                'time': '0:00'
+                'split': ''
             },
             'event': 0,
             'heat': 0,
-            'running_time': '0:00'
+            'time': '0:00'
         }
 
         self.runner()
@@ -525,12 +525,12 @@ class Swimming (ColoradoTimeSystems):
             lane = str(data[0])
             place = data[1]
 
-        minutes = str(data[2]) + str(data[3])
-        seconds = str(data[4]) + str(data[5])
-        milliseconds = str(data[6]) + str(data[7])
-        if lane in self.data.keys() and milliseconds != '':
-            self.data[lane]['place'] = place
-            self.data[lane]['time'] = f'{minutes}:{seconds}.{milliseconds}'
+            minutes = str(data[2]) + str(data[3])
+            seconds = str(data[4]) + str(data[5])
+            milliseconds = str(data[6]) + str(data[7])
+            if lane in self.data.keys() and milliseconds != '' and len(milliseconds) >= 2:
+                self.data[lane]['place'] = place
+                self.data[lane]['split'] = f'{minutes}:{seconds}.{milliseconds}'
     
     def process_event(self, data, data_format):
         if data[3] != '' or data[4] != '':
@@ -545,6 +545,6 @@ class Swimming (ColoradoTimeSystems):
         milliseconds = str(data[6]) + str(data[7])
         if milliseconds != '':
             if minutes != '':
-                self.data['running_time'] = f'{minutes}:{seconds}.{milliseconds}'
+                self.data['time'] = f'{minutes}:{seconds}.{milliseconds}'
             else:
-                self.data['running_time'] = f'{seconds}.{milliseconds}'
+                self.data['time'] = f'{seconds}.{milliseconds}'
