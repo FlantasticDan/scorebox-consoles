@@ -483,7 +483,8 @@ class Swimming (ColoradoTimeSystems):
             },
             'event': 0,
             'heat': 0,
-            'time': '0:00'
+            'time': '0:00',
+            'lengths': 0
         }
 
         self.runner()
@@ -507,12 +508,16 @@ class Swimming (ColoradoTimeSystems):
                 data_format.append(value)
             else:
                 data_format.append('')
-        # print(f'Channel {channel} - {data} - {data_format}')
+        ## Channel Dubugger
+        # if int(channel) == 12:
+        #     print(f'Channel {channel} - {data} - {data_format}')
 
         if int(channel) == 0:
             self.process_running_time(data, data_format)
         elif int(channel) in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             self.process_lane(data, data_format)
+        elif int(channel) == 11 :
+            self.process_lengths(data, data_format)
         elif int(channel) == 12:
             self.process_event(data, data_format)
     
@@ -535,17 +540,23 @@ class Swimming (ColoradoTimeSystems):
                     self.data[lane]['place'] = 0
     
     def process_event(self, data, data_format):
-        if data[3] != '' or data[4] != '':
+        if data[3] != '' or data[4] != '' or data[7] == '':
             return
 
         event = str(data[0]) + str(data[1]) + str(data[2])
         if event:
-            self.data['event'] = int(event)
+            event = int(event)
+            # if event != self.data['event']:
+            #     self.clear_lanes()
+            self.data['event'] = event
         else:
             self.data['event'] = 0
         heat = str(data[5]) + str(data[6]) + str(data[7])
         if heat:
-            self.data['heat'] = int(heat)
+            heat = int(heat)
+            # if heat != self.data['heat']:
+            #     self.clear_lanes()
+            self.data['heat'] = heat
         else:
             self.data['heat'] = 0
     
@@ -558,3 +569,20 @@ class Swimming (ColoradoTimeSystems):
                 self.data['time'] = f'{minutes}:{seconds}.{milliseconds}'
             else:
                 self.data['time'] = f'{seconds}.{milliseconds}'
+                if self.data['time'] == '.0':
+                    self.clear_lanes()
+    
+    def process_lengths(self, data, data_format):
+        lengths = str(data[0]) + str(data[1])
+        if lengths:
+            self.data['lengths'] = int(lengths)
+        else:
+            self.data['lengths'] = 0
+
+    def clear_lanes(self):
+        for lane in range(1, 10):
+            lane = str(lane)
+            self.data[lane] = {
+                'place': 0,
+                'split': ''
+            }
