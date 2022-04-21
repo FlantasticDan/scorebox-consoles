@@ -11,6 +11,7 @@ Python interface for scoreboard consoles manufactured by Daktronics and Colorado
     - :water_polo: Water Polo
 - Colorado Time Systems System 6
     - :water_polo: Water Polo
+    - :swimmer: Swimming
 
 ## Installation
 `pip install scorebox-consoles`
@@ -78,4 +79,11 @@ Sport classes take a serial port string as an argument and expose an `export` me
 | `period` | str | Game Period |
 
 #### :swimmer: Swimming
-*Work in Progress*
+| Key | Type | Description |
+| --- | --- | --- |
+| `{lane # (1-9)}.place` | int | Final Event Placement, `0` if still swimming |
+|  `{lane # (1-9)}.split` | str | Most Recent Split Time, or Final Race Time if `place` != `0` |
+| `time` | str | Running Clock Time of Current Event |
+| `event` | int | Event ID Number |
+| `heat` | int | Heat Number |
+| `lengths` | int | Lengths of the Pool Completed by the Race Leader |
