@@ -1,6 +1,7 @@
 from typing import Tuple
 import serial
 from serial import PARITY_NONE
+from serial.serialutil import SerialException 
 from multiprocessing.connection import Connection
 
 from . import SerialConnection
@@ -37,7 +38,10 @@ class Daktronics (SerialConnection):
             # Filter out 'SYNC IDLE' transmissions
             control_character = 0
             while control_character != b'\x16':
-                control_character = connection.read()
+                try:
+                    control_character = connection.read()
+                except SerialException:
+                    continue
             message = ''
             last_character = b''
             # Real Time Data Messages end with a 'END TRANSMISSION BLOCK'
@@ -48,5 +52,8 @@ class Daktronics (SerialConnection):
                     message += chr(dec)
                 else:
                     pass
-                last_character = connection.read()
+                try:
+                    last_character = connection.read()
+                except SerialException:
+                    continue
             self.parse(message)

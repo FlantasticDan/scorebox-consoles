@@ -9,6 +9,7 @@ Python interface for scoreboard consoles manufactured by Daktronics and Colorado
     - :football: Football
     - :volleyball: Volleyball
     - :water_polo: Water Polo
+    - :wrestling: Wrestling
 - Colorado Time Systems System 6
     - :water_polo: Water Polo
     - :swimmer: Swimming
@@ -24,17 +25,36 @@ if __name__ == '__main__':
     basketball = Basketball('COM1')
     game_state = basketball.export()
 ```
-*Call to sport class must be protected by an `if __name__ == '__main__'` because the serial connection is read in a seperate process*
+*Calls to sport classes must be protected by an `if __name__ == '__main__'` because the serial connection is read in a seperate process*
 
 ### Connecting a Console
-Consoles are connected with via a Serial to USB cable.
+Consoles are connected with a Serial to USB cable.
 
 **Daktronics All Sport 5000** - Connect to the port labeled I/O Port (J6) with a DB25 to DB9 Serial connector
 
 **Colorado Time Systems System 6** - Tap into the 1/4" Scoreboard Out plug and connect the tip to pin 2 of a Serial DB9 connector and the shoe to pin 5.
 
 ### API
-Sport classes take a serial port string as an argument and expose an `export` method that returns the current game state.
+Sport classes take a serial port string as an argument and expose an `export` method that returns the current game state.  All sport classes also feature an `on_update` method that is designed to be reimplemented.  It is called everytime the state of the game changes, depending on the settings of the console, this can work out to be 10 times per second or faster.  `on_update` must take a single variable, a Python dictionary that corresponds to the game state values described below for each sport.
+```python
+from consoles.sports import Football
+
+def do_something(game_state):
+    # Do something useful with the parse score console information
+    # For example:
+    home = game_state['home_score']
+    visitor = game_state['visitor_score']
+    if home > visitor:
+        print(f'The Home Team leads {home} to {visitor}.')
+    elif visitor > home:
+        print(f'The Visiting Team leads {visitor} to {home}.')
+    else:
+        print(f'The teams are tied at {home}')
+
+if __name__ == '__main__':
+    football = Football('COM1')
+    football.on_update = do_something
+```
 
 #### :basketball: Basketball
 | Key | Type | Description |
