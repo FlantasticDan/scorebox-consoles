@@ -12,6 +12,7 @@ Python interface for scoreboard consoles manufactured by Daktronics and Colorado
     - :wrestling: Wrestling
 - Colorado Time Systems System 6
     - :water_polo: Water Polo
+    - :swimmer: Swimming
 
 ## Installation
 `pip install scorebox-consoles`
@@ -81,6 +82,19 @@ if __name__ == '__main__':
 | `to_go`| int | Yards For First Down |
 | `ball_on` | int | Ball Location on the Field (does not include side of field) |
 | `flag` | bool | Flag Status (only updated on console button push) |
+
+#### :swimmer: Swimming
+| Key | Type | Description |
+| --- | --- | --- |
+| `{lane # (1-9)}` . `place` | int | Final Event Placement, `0` if still swimming |
+|  `{lane # (1-9)}` . `split` | str | Most Recent Split Time, or Final Race Time if `place` != `0` |
+| `time` | str | Running Clock Time of Current Event |
+| `event` | int | Event ID Number |
+| `heat` | int | Heat Number |
+| `lengths` | int | Lengths of the Pool Completed by the Race Leader |
+
+*__Notes:__ Lane information resets independently of the Event/Heat so it's probable that immediatly following a race, the event/heat will advance but the lane data will remain until the start of the next event.  The running clock can keep running after all lanes have finished. The `time` value changes from `0.0` to `.0` when the starting horn is triggered.  The System 6 console supports up to 12 lanes but this library only supports lanes 1-9.  A disqualifed lane will have a `place` of `13`.*
+
 
 #### :volleyball: Volleyball
 | Key | Type | Description |

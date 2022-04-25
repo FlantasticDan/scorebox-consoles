@@ -496,3 +496,152 @@ class Wrestling (Daktronics):
         potential = self.get_field(message, message_range, 142, 2)
         if potential != '':
             self.data['period'] = potential + get_ordinal(int(potential))
+
+class Swimming (ColoradoTimeSystems):
+    '''Swimming as scored by a Colorado Time System 6'''
+    def __init__(self, port: str) -> None:
+        super().__init__(port)
+
+        # Scoreboard Data
+        self.data = {
+            '1': {
+                'place': 0,
+                'split': ''
+            },
+            '2': {
+                'place': 0,
+                'split': ''
+            },
+            '3': {
+                'place': 0,
+                'split': ''
+            },
+            '4': {
+                'place': 0,
+                'split': ''
+            },
+            '5': {
+                'place': 0,
+                'split': ''
+            },
+            '6': {
+                'place': 0,
+                'split': ''
+            },
+            '7': {
+                'place': 0,
+                'split': ''
+            },
+            '8': {
+                'place': 0,
+                'split': ''
+            },
+            '9': {
+                'place': 0,
+                'split': ''
+            },
+            'event': 0,
+            'heat': 0,
+            'time': '0:00',
+            'lengths': 0
+        }
+
+        self.runner()
+    
+    def export(self) -> Dict:
+        '''Python Dictionary of Processed Score Data'''
+        return self.data
+    
+    def process(self, channel: int, values: List[int], formats: List[int]) -> None:
+        data = []
+        data_format = []
+        valid = 0
+        for value in values:
+            if value != 15 and value != '':
+                data.append(value)
+                valid += 1
+            else:
+                data.append('')
+        for value in formats:
+            if value != 0 and value != '':
+                data_format.append(value)
+            else:
+                data_format.append('')
+        ## Channel Dubugger
+        # if int(channel) == 12:
+        #     print(f'Channel {channel} - {data} - {data_format}')
+
+        if int(channel) == 0:
+            self.process_running_time(data, data_format)
+        elif int(channel) in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
+            self.process_lane(data, data_format)
+        elif int(channel) == 11 :
+            self.process_lengths(data, data_format)
+        elif int(channel) == 12:
+            self.process_event(data, data_format)
+    
+    def process_lane(self, data, data_format):
+        if data_format[4] != 2 or data_format[5] != 2:
+            return
+
+        if data[0] != '':
+            lane = str(data[0])
+            place = data[1]
+
+            minutes = str(data[2]) + str(data[3])
+            seconds = str(data[4]) + str(data[5])
+            milliseconds = str(data[6]) + str(data[7])
+            if lane in self.data.keys() and milliseconds != '' and len(milliseconds) >= 2:
+                self.data[lane]['split'] = f'{minutes}:{seconds}.{milliseconds}'
+                if place:
+                    self.data[lane]['place'] = int(place)
+                else:
+                    self.data[lane]['place'] = 0
+    
+    def process_event(self, data, data_format):
+        if data[3] != '' or data[4] != '' or data[7] == '':
+            return
+
+        event = str(data[0]) + str(data[1]) + str(data[2])
+        if event:
+            event = int(event)
+            # if event != self.data['event']:
+            #     self.clear_lanes()
+            self.data['event'] = event
+        else:
+            self.data['event'] = 0
+        heat = str(data[5]) + str(data[6]) + str(data[7])
+        if heat:
+            heat = int(heat)
+            # if heat != self.data['heat']:
+            #     self.clear_lanes()
+            self.data['heat'] = heat
+        else:
+            self.data['heat'] = 0
+    
+    def process_running_time(self, data, data_format):
+        minutes = str(data[2]) + str(data[3])
+        seconds = str(data[4]) + str(data[5])
+        milliseconds = str(data[6]) + str(data[7])
+        if milliseconds != '':
+            if minutes != '':
+                self.data['time'] = f'{minutes}:{seconds}.{milliseconds}'
+            else:
+                self.data['time'] = f'{seconds}.{milliseconds}'
+                if self.data['time'] == '.0':
+                    self.clear_lanes()
+    
+    def process_lengths(self, data, data_format):
+        lengths = str(data[0]) + str(data[1])
+        if lengths:
+            self.data['lengths'] = int(lengths)
+        else:
+            self.data['lengths'] = 0
+
+    def clear_lanes(self):
+        for lane in range(1, 10):
+            lane = str(lane)
+            self.data[lane] = {
+                'place': 0,
+                'split': ''
+            }
